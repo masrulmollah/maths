@@ -74,7 +74,7 @@ def main():
             with col2:
                 # Dropdown to select a class within the selected category
                 if filtered_classes:
-                    selected_class = st.selectbox("", filtered_classes, key=f"class_{category}")
+                    selected_class = st.selectbox("challenge number", filtered_classes, key=f"class_{category}")
                 else:
                     selected_class = None
                     st.write("No classes available yet. Please add problems in the 'Add Challenge' tab.")
@@ -96,7 +96,7 @@ def main():
 
                             # Colorful answer box using custom CSS
                             user_answer = st.text_input(
-                                label="",
+                                label="Answer",
                                 key=f"answer_{index}_{category}",
                                 placeholder="Enter your answer..."
                             )
