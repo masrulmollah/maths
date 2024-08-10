@@ -22,7 +22,7 @@ st.markdown(
         color: #000000; /* Black text */
         border: 2px solid #4CAF50; /* Green border */
         border-radius: 5px;
-        padding: 10px;
+        padding: 0px; /* Remove padding */
         font-size: 16px;
     }
     </style>
@@ -35,9 +35,9 @@ def main():
     # Custom colorful subheader
     st.markdown(
         """
-        <h2 style='text-align: center; color: #FFFFFF; 
+        <h3 style='text-align: center; color: #FFFFFF; 
         background: linear-gradient(90deg, rgba(29,53,87,1) 0%, rgba(69,123,157,1) 35%, rgba(241,95,95,1) 100%); 
-        padding: 10px; border-radius: 10px;'>Muhammad Math Challenge</h2>
+        padding: 10px; border-radius: 10px;'>Muhammad Math Challenge</h3>
         """, 
         unsafe_allow_html=True
     )
@@ -101,7 +101,7 @@ def main():
                                 placeholder="Enter your answer..."
                             )
 
-                            col1, col2 = st.columns([1, 2])
+                            col1, col2 = st.columns([1, 4])
 
                             with col1:
                                 submit_button = st.button("Submit", key=f"submit_{index}_{category}")
@@ -110,7 +110,7 @@ def main():
                                 if submit_button and user_answer:
                                     try:
                                         if int(user_answer.strip()) == int(row['Answer']):
-                                            st.success("Correct!")
+                                            st.success("*** Correct! ***")
                                         else:
                                             st.error("Incorrect, try again.")
                                     except ValueError:
