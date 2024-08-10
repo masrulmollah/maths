@@ -110,7 +110,7 @@ def main():
                                 if submit_button and user_answer:
                                     try:
                                         if int(user_answer.strip()) == int(row['Answer']):
-                                            st.success("*** Correct! ***")
+                                            st.success("*** Correct answer! ***")
                                         else:
                                             st.error("Incorrect, try again.")
                                     except ValueError:
