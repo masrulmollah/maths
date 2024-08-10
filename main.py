@@ -13,6 +13,23 @@ def load_problems(file_path):
     else:
         return pd.DataFrame(columns=['Class', 'Category', 'Problem', 'Answer'])
 
+# Custom CSS for the answer box
+st.markdown(
+    """
+    <style>
+    div.stTextInput > div > input {
+        background-color: #FFEB3B; /* Bright yellow background */
+        color: #000000; /* Black text */
+        border: 2px solid #4CAF50; /* Green border */
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Main App
 def main():
     # Custom colorful subheader
@@ -35,77 +52,75 @@ def main():
     # Get unique categories
     unique_categories = st.session_state.problem_data['Category'].unique().tolist()
 
+    # Reorder the tabs to place "Add Challenge" on the rightmost side
+    if unique_categories:
+        tabs = unique_categories + ["Add Challenge"]
+    else:
+        tabs = ["Add Challenge"]
+
     # Tabs at the top: "View Challenge" and "Add Challenge"
-    tab1, tab2 = st.tabs(["View Challenge", "Add Challenge"])
+    tab_list = st.tabs(tabs)
 
-    with tab1:
-        if unique_categories:
-            category_tabs = st.tabs(unique_categories)
-            for category, cat_tab in zip(unique_categories, category_tabs):
-                with cat_tab:
-                    # Filter classes based on the selected category
-                    filtered_classes = st.session_state.problem_data[
-                        st.session_state.problem_data['Category'] == category
-                    ]['Class'].unique().tolist()
+    for i, category in enumerate(unique_categories):
+        with tab_list[i]:
+            # Filter classes based on the selected category
+            filtered_classes = st.session_state.problem_data[
+                st.session_state.problem_data['Category'] == category
+            ]['Class'].unique().tolist()
 
-                    # Create columns to align the class dropdown on the right
-                    col1, col2 = st.columns([3, 1])
+            # Create columns to align the class dropdown on the right
+            col1, col2 = st.columns([3, 1])
 
-                    with col2:
-                        # Dropdown to select a class within the selected category
-                        if filtered_classes:
-                            selected_class = st.selectbox("", filtered_classes, key=f"class_{category}")
-                        else:
-                            selected_class = None
-                            st.write("No classes available yet. Please add problems in the 'Add Challenge' tab.")
+            with col2:
+                # Dropdown to select a class within the selected category
+                if filtered_classes:
+                    selected_class = st.selectbox("", filtered_classes, key=f"class_{category}")
+                else:
+                    selected_class = None
+                    st.write("No classes available yet. Please add problems in the 'Add Challenge' tab.")
 
-                    if selected_class:
-                        with col1:
-                            class_data = st.session_state.problem_data[
-                                (st.session_state.problem_data['Class'] == selected_class) &
-                                (st.session_state.problem_data['Category'] == category)
-                            ]
+            if selected_class:
+                with col1:
+                    class_data = st.session_state.problem_data[
+                        (st.session_state.problem_data['Class'] == selected_class) &
+                        (st.session_state.problem_data['Category'] == category)
+                    ]
 
-                            if not class_data.empty:
-                                for index, row in class_data.iterrows():
-                                    # Display the problem figures
-                                    problem_html = f"""
-                                    <p style="color:#2E86C1; font-size:24px; margin-left: 20px;"><strong>{row['Problem']}</strong></p>
-                                    """
-                                    st.markdown(problem_html, unsafe_allow_html=True)
+                    if not class_data.empty:
+                        for index, row in class_data.iterrows():
+                            # Display the problem figures
+                            problem_html = f"""
+                            <p style="color:#2E86C1; font-size:24px; margin-left: 20px;"><strong>{row['Problem']}</strong></p>
+                            """
+                            st.markdown(problem_html, unsafe_allow_html=True)
 
-                                    # Answer box and submit button
-                                    user_answer = st.text_input("Put your answer below", key=f"answer_{index}_{category}")
-                                    
-                                    col1, col2 = st.columns([1, 2])
-                                    
-                                    with col1:
-                                        submit_button = st.button("Submit", key=f"submit_{index}_{category}")
+                            # Colorful answer box using custom CSS
+                            user_answer = st.text_input(
+                                label="",
+                                key=f"answer_{index}_{category}",
+                                placeholder="Enter your answer..."
+                            )
 
-                                    with col2:
-                                        if submit_button and user_answer:
-                                            try:
-                                                if int(user_answer.strip()) == int(row['Answer']):
-                                                    st.success("Correct!")
-                                                else:
-                                                    st.error("Incorrect, try again.")
-                                            except ValueError:
-                                                st.error("Please enter a valid integer.")
+                            col1, col2 = st.columns([1, 2])
 
-                            else:
-                                st.write(f"No problems available for the selected class.")
-        else:
-            st.write("No categories available yet. Please add problems in the 'Add Challenge' tab.")
+                            with col1:
+                                submit_button = st.button("Submit", key=f"submit_{index}_{category}")
 
-    with tab2:
-        # Custom subheader with a suitable color scheme
-        st.markdown(
-            """
-            <h2 style='color:#FFFFFF; background-color:#FF5733; padding:10px; border-radius:5px;'>Add New Math Problem</h2>
-            """, 
-            unsafe_allow_html=True
-        )
+                            with col2:
+                                if submit_button and user_answer:
+                                    try:
+                                        if int(user_answer.strip()) == int(row['Answer']):
+                                            st.success("Correct!")
+                                        else:
+                                            st.error("Incorrect, try again.")
+                                    except ValueError:
+                                        st.error("Please enter a valid integer.")
 
+                    else:
+                        st.write(f"No problems available for the selected class.")
+
+    # The last tab is always "Add Challenge"
+    with tab_list[-1]:
         # Input fields for adding a problem
         problem = st.text_input("Enter the math problem (e.g., 3 + 2):")
         answer = st.number_input("Enter the answer:", min_value=0)
