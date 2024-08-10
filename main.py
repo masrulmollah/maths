@@ -35,9 +35,9 @@ def main():
     # Custom colorful subheader
     st.markdown(
         """
-        <h1 style='text-align: center; color: #FFFFFF; 
+        <h2 style='text-align: center; color: #FFFFFF; 
         background: linear-gradient(90deg, rgba(29,53,87,1) 0%, rgba(69,123,157,1) 35%, rgba(241,95,95,1) 100%); 
-        padding: 10px; border-radius: 10px;'>Muhammad Math Challenge</h1>
+        padding: 10px; border-radius: 10px;'>Muhammad Math Challenge</h2>
         """, 
         unsafe_allow_html=True
     )
